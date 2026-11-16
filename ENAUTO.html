@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ENAUTO // Practice Exam</title>
+<style>
+:root{
+  --bg:#12151b;
+  --panel:#181c24;
+  --panel-2:#1e232c;
+  --line:#2a3140;
+  --text:#dbe2ee;
+  --text-dim:#7d8ba0;
+  --amber:#e8a54b;
+  --amber-dim:#8a672f;
+  --cyan:#5ec9c2;
+  --red:#e0654f;
+  --green:#6fbf8b;
+  --mono: 'JetBrains Mono','SF Mono',Consolas,monospace;
+  --sans: 'Inter',-apple-system,'Segoe UI',sans-serif;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(94,201,194,0.07), transparent),
+    var(--bg);
+  color:var(--text);
+  font-family:var(--sans);
+  min-height:100vh;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 42px 42px;
+}
+::selection{background:var(--amber-dim);color:#fff;}
+
+.topbar{
+  border-bottom:1px solid var(--line);
+  background:rgba(18,21,27,0.85);
+  backdrop-filter:blur(8px);
+  position:sticky;top:0;z-index:20;
+}
+.topbar-inner{
+  max-width:920px;margin:0 auto;padding:14px 20px;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--mono);}
+.brand-dot{width:9px;height:9px;border-radius:2px;background:var(--amber);box-shadow:0 0 12px var(--amber);}
+.brand-name{font-weight:600;letter-spacing:0.06em;font-size:14px;}
+.brand-sub{color:var(--text-dim);font-size:11px;letter-spacing:0.08em;}
+.stat-strip{display:flex;gap:18px;font-family:var(--mono);font-size:12px;color:var(--text-dim);}
+.stat-strip b{color:var(--text);font-weight:600;}
+
+.wrap{max-width:920px;margin:0 auto;padding:28px 20px 80px;}
+
+.setup-hero{padding:34px 0 10px;}
+.setup-hero h1{
+  font-family:var(--mono);font-size:26px;line-height:1.35;margin:0 0 8px;font-weight:600;
+  letter-spacing:-0.01em;
+}
+.setup-hero h1 .hl{color:var(--amber);}
+.setup-hero p{color:var(--text-dim);font-size:14.5px;max-width:60ch;line-height:1.6;margin:0;}
+
+.section-label{
+  font-family:var(--mono);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--text-dim);margin:30px 0 12px;display:flex;align-items:center;gap:10px;
+}
+.section-label::after{content:'';flex:1;height:1px;background:var(--line);}
+
+.chip-grid{display:flex;flex-wrap:wrap;gap:8px;}
+.chip{
+  font-family:var(--mono);font-size:12.5px;padding:8px 13px;border-radius:6px;
+  border:1px solid var(--line);background:var(--panel);color:var(--text-dim);
+  cursor:pointer;transition:all .15s ease;user-select:none;
+  display:flex;align-items:center;gap:7px;
+}
+.chip:hover{border-color:var(--amber-dim);color:var(--text);}
+.chip.active{background:rgba(232,165,75,0.1);border-color:var(--amber);color:var(--amber);}
+.chip .n{color:var(--text-dim);font-size:11px;}
+.chip.active .n{color:var(--amber-dim);}
+
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:600px){.mode-grid{grid-template-columns:1fr;}}
+.mode-card{
+  background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;
+  cursor:pointer;transition:all .15s ease;
+}
+.mode-card:hover{border-color:var(--cyan);}
+.mode-card.active{border-color:var(--cyan);background:rgba(94,201,194,0.06);}
+.mode-card .mt{font-family:var(--mono);font-size:13px;color:var(--text);font-weight:600;margin-bottom:4px;}
+.mode-card .md{font-size:12.5px;color:var(--text-dim);line-height:1.5;}
+
+.count-row{display:flex;align-items:center;gap:14px;margin-top:16px;}
+.count-row input[type=range]{flex:1;accent-color:var(--amber);}
+.count-badge{
+  font-family:var(--mono);font-size:13px;background:var(--panel-2);border:1px solid var(--line);
+  padding:6px 12px;border-radius:6px;min-width:64px;text-align:center;color:var(--amber);
+}
+
+.start-btn{
+  margin-top:32px;width:100%;padding:16px;border-radius:10px;border:none;
+  background:linear-gradient(135deg,var(--amber),#d18a2f);
+  color:#1a1206;font-family:var(--mono);font-weight:700;font-size:14.5px;letter-spacing:0.03em;
+  cursor:pointer;transition:transform .1s ease, box-shadow .2s ease;
+  box-shadow:0 8px 24px -8px rgba(232,165,75,0.5);
+}
+.start-btn:hover{transform:translateY(-1px);box-shadow:0 10px 28px -6px rgba(232,165,75,0.6);}
+.start-btn:active{transform:translateY(0);}
+.start-btn:disabled{opacity:0.4;cursor:not-allowed;box-shadow:none;}
+
+.quiz-header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px;}
+.progress-wrap{flex:1;}
+.progress-meta{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11.5px;color:var(--text-dim);margin-bottom:7px;}
+.progress-meta b{color:var(--text);}
+.progress-track{height:6px;background:var(--panel-2);border-radius:4px;overflow:hidden;border:1px solid var(--line);}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--amber));transition:width .3s ease;}
+.score-pill{
+  font-family:var(--mono);font-size:12.5px;padding:8px 14px;border-radius:8px;
+  background:var(--panel);border:1px solid var(--line);white-space:nowrap;
+}
+.score-pill .sc{color:var(--green);font-weight:700;}
+.score-pill .tot{color:var(--text-dim);}
+
+.q-tag{
+  display:inline-block;font-family:var(--mono);font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;
+  color:var(--cyan);background:rgba(94,201,194,0.1);border:1px solid rgba(94,201,194,0.25);
+  padding:4px 10px;border-radius:5px;margin-bottom:14px;
+}
+.q-card{
+  background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:26px 26px 22px;
+  animation:fadein .25s ease;
+}
+@keyframes fadein{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.q-text{font-size:17px;line-height:1.55;font-weight:500;margin:0 0 22px;}
+.q-text code{font-family:var(--mono);background:var(--panel-2);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--amber);}
+
+.opt-list{display:flex;flex-direction:column;gap:10px;}
+.opt{
+  display:flex;align-items:flex-start;gap:12px;padding:13px 15px;border-radius:9px;
+  border:1px solid var(--line);background:var(--panel-2);cursor:pointer;
+  transition:border-color .15s ease, background .15s ease;
+}
+.opt:hover:not(.locked){border-color:var(--amber-dim);background:#232936;}
+.opt .letter{
+  font-family:var(--mono);font-size:11.5px;font-weight:700;color:var(--text-dim);
+  width:22px;height:22px;border-radius:5px;border:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;
+}
+.opt .otext{font-size:14.5px;line-height:1.5;color:var(--text);}
+.opt.selected{border-color:var(--amber);background:rgba(232,165,75,0.08);}
+.opt.selected .letter{background:var(--amber);color:#1a1206;border-color:var(--amber);}
+.opt.correct{border-color:var(--green);background:rgba(111,191,139,0.1);}
+.opt.correct .letter{background:var(--green);color:#0d1f14;border-color:var(--green);}
+.opt.wrong{border-color:var(--red);background:rgba(224,101,79,0.1);}
+.opt.wrong .letter{background:var(--red);color:#2a0d08;border-color:var(--red);}
+.opt.locked{cursor:default;}
+.opt.dim{opacity:0.5;}
+
+.explain{
+  margin-top:18px;padding:16px 18px;border-radius:10px;background:var(--panel-2);
+  border-left:3px solid var(--cyan);font-size:13.5px;line-height:1.65;color:var(--text-dim);
+  animation:fadein .25s ease;
+}
+.explain b{color:var(--text);}
+.explain .verdict{font-family:var(--mono);font-size:12px;letter-spacing:0.05em;text-transform:uppercase;font-weight:700;margin-bottom:8px;display:block;}
+.explain .verdict.ok{color:var(--green);}
+.explain .verdict.bad{color:var(--red);}
+.caveat{
+  margin-top:10px;padding:9px 12px;border-radius:7px;background:rgba(232,165,75,0.08);
+  border:1px solid rgba(232,165,75,0.25);font-size:12.5px;color:var(--amber);line-height:1.5;
+}
+
+.nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:20px;gap:12px;}
+.btn{
+  font-family:var(--mono);font-size:12.5px;padding:11px 18px;border-radius:8px;cursor:pointer;
+  border:1px solid var(--line);background:var(--panel);color:var(--text);transition:all .15s ease;
+  font-weight:600;letter-spacing:0.02em;
+}
+.btn:hover:not(:disabled){border-color:var(--cyan);}
+.btn:disabled{opacity:0.3;cursor:not-allowed;}
+.btn.primary{background:var(--amber);color:#1a1206;border-color:var(--amber);}
+.btn.primary:hover{filter:brightness(1.08);}
+.btn.ghost{background:transparent;}
+
+.results-card{text-align:center;padding:50px 30px;}
+.result-score{font-family:var(--mono);font-size:56px;font-weight:700;margin:14px 0 6px;}
+.result-score .of{font-size:22px;color:var(--text-dim);font-weight:500;}
+.result-pct{font-family:var(--mono);font-size:14px;color:var(--text-dim);letter-spacing:0.05em;}
+.result-msg{margin-top:18px;font-size:15px;color:var(--text-dim);max-width:46ch;margin-left:auto;margin-right:auto;line-height:1.6;}
+.result-actions{display:flex;gap:10px;justify-content:center;margin-top:30px;flex-wrap:wrap;}
+
+.review-list{margin-top:34px;display:flex;flex-direction:column;gap:10px;}
+.review-item{
+  background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:14px 16px;
+  display:flex;gap:12px;align-items:flex-start;text-align:left;
+}
+.review-item .ic{flex-shrink:0;font-family:var(--mono);font-size:13px;margin-top:1px;}
+.review-item.ok .ic{color:var(--green);}
+.review-item.bad .ic{color:var(--red);}
+.review-item .rt{font-size:13.5px;line-height:1.5;color:var(--text-dim);}
+.review-item .rt b{color:var(--text);font-weight:500;}
+
+footer{text-align:center;color:var(--text-dim);font-family:var(--mono);font-size:11px;margin-top:50px;letter-spacing:0.05em;}
+
+.hidden{display:none !important;}
+</style>
+</head>
+<body>
+
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="brand-dot"></div>
+      <div>
+        <div class="brand-name">ENAUTO</div>
+        <div class="brand-sub">PRACTICE EXAM</div>
+      </div>
+    </div>
+    <div class="stat-strip" id="topStats"></div>
+  </div>
+</div>
+
+
+<div class="wrap">
+
+  <div id="setupScreen">
+    <div class="setup-hero">
+      <h1>Start a <span class="hl">practice</span> exam session</h1>
+      <p>1.0 Network Automation Foundation</p>
+      <p>2.0 Device-Level Network Automation</p>
+      <p>3.0 Controller-Based Network Automation</p>
+      <p>4.0 Operations</p>
+      <p>5.0 AI in Automation</p>
+    </div>
+
+    <div class="section-label">Topics</div>
+    <div class="chip-grid" id="topicChips"></div>
+
+    <div class="section-label">Mode</div>
+    <div class="mode-grid">
+      <div class="mode-card active" data-mode="study" id="modeStudy">
+        <div class="mt">📘 STUDY</div>
+        <div class="md">Shows the explanation right after you answer. Best for learning.</div>
+      </div>
+      <div class="mode-card" data-mode="exam" id="modeExam">
+        <div class="mt">⏱ PRATICE EXAM </div>
+        <div class="md">No feedback until the end. Full review with answer key when you finish.</div>
+      </div>
+    </div>
+
+    <div class="section-label"># of Questions</div>
+    <div class="count-row">
+      <input type="range" id="countSlider" min="5" max="80" value="20" step="1">
+      <div class="count-badge" id="countBadge">20</div>
+    </div>
+
+    <button class="start-btn" id="startBtn">▶ START SESSION</button>
+  </div>
+
+  <div id="quizScreen" class="hidden">
+    <div class="quiz-header">
+      <div class="progress-wrap">
+        <div class="progress-meta"><span>QUESTION <b id="qNum">1</b> / <b id="qTotal">20</b></span><span id="qModeLabel">STUDY MODE</span></div>
+        <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+      </div>
+      <div class="score-pill"><span class="sc" id="liveScore">0</span><span class="tot"> correct</span></div>
+    </div>
+
+    <div class="q-tag" id="qTag">TAG</div>
+    <div class="q-card">
+      <div class="q-text" id="qText"></div>
+      <div class="opt-list" id="optList"></div>
+      <div class="explain hidden" id="explainBox"></div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn ghost" id="prevBtn">← PREVIOUS</button>
+      <span style="font-family:var(--mono);font-size:11px;color:var(--text-dim);">select an option</span>
+      <button class="btn primary" id="nextBtn" disabled>NEXT →</button>
+    </div>
+  </div>
+
+  <div id="resultsScreen" class="hidden">
+    <div class="q-card results-card">
+      <div class="q-tag" style="margin:0 auto 14px;">FINAL RESULT</div>
+      <div class="result-score"><span id="finalScore">0</span><span class="of" id="finalTotal"> / 20</span></div>
+      <div class="result-pct" id="finalPct">0% CORRECT</div>
+      <div class="result-msg" id="resultMsg"></div>
+      <div class="result-actions">
+        <button class="btn primary" id="reviewBtn">VIEW REVIEW</button>
+        <button class="btn" id="retryWrongBtn">RETRY MISSED</button>
+        <button class="btn ghost" id="restartBtn">NEW SESSION</button>
+      </div>
+    </div>
+    <div class="review-list" id="reviewList"></div>
+  </div>
+
+  <footer>ENAUTO PRACTICE · Generated by Freitas</footer>
+</div>
+
+<script>
+/* ============ QUESTION BANK ============ */
+const BANK = [
+{t:"Netmiko",q:"Your team needs a daily report of the interface status of all branch routers. The report should include the output of several show commands and save the results in files for each device. Which approach is the most reliable?",
+o:["Use send_config_set() with show commands inside the configuration block and redirect the results to a log file.","Use a loop with ConnectHandler for each device, run multiple send_command() calls, and write the outputs to a separate file per device.","Open one ConnectHandler session, run all commands for the first device, and reuse the same session object for the rest of the devices.","Use send_command_timing() to run all commands simultaneously, capture the combined output, and split it into separate reports manually."],
+c:1,e:"A ConnectHandler object is bound to a single device — each one needs its own session. send_command() waits intelligently for the prompt on show commands, and wrapping each device in try/except means one unreachable router doesn't kill the whole run."},
+
+{t:"Netmiko",q:"How can Netmiko be effectively used when configuring IPsec VPNs?",
+o:["By dynamically negotiating IPsec Phase 1 and Phase 2 parameters between remote peers without relying on network device CLIs.","By integrating directly with SD-WAN controllers to orchestrate IPsec tunnels at the overlay level.","By passively inspecting encrypted traffic flows to optimize VPN throughput and detect key renegotiation events.","By automating the push, verification, and auditing of IPsec VPN configurations on routers and firewalls through scripted SSH sessions."],
+c:3,e:"Netmiko is a CLI-driven SSH automation library — it doesn't participate in IKE/ISAKMP negotiation itself (that's the device's job). Its real use is pushing config, verifying it (show crypto isakmp/ipsec sa), and auditing at scale."},
+
+{t:"Netmiko",q:"What is the main difference between static and dynamic VPN configuration in automation scripts?",
+o:["Static configuration uses send_config_set(), dynamic uses send_command().","Static is only for VLANs, dynamic is only for VPNs.","Static hardcodes peer details in the script; dynamic stores them in variables or external files and loops through them.","Static requires Netmiko, dynamic does not."],
+c:2,e:"The distinction is about where the data lives — hardcoded in the script (static) vs. in YAML/CSV/external variables looped through (dynamic). Both approaches can use the same Netmiko methods."},
+
+{t:"Netmiko",q:"Why does automation with Python and Netmiko reduce the risk of misconfigurations in routing and policies compared to manual CLI work?",
+o:["Because Netmiko automatically chooses the best routing protocol for the network.","Because routers reject any incorrect manual commands when Netmiko is used.","Because the script reuses the same predefined configuration blocks across all routers, eliminating typos and inconsistencies.","Because Python changes the router operating system to prevent errors."],
+c:2,e:"Automation doesn't make routers smarter — it removes human variability from repetitive tasks. The same validated template is reapplied identically across every device."},
+
+{t:"Netmiko",q:"You are asked to configure hostnames on 50 routers using Netmiko. The script must continue even if one device is unreachable and confirms the hostname on each router. Which combination of Netmiko features and Python logic is best for this task?",
+o:["Use ConnectHandler for each device, wrap the connection in try/except, and run a verification command after configuration.","Use ConnectHandler for each device, but rely only on is_alive() to detect unreachable devices and skip verification.","Use a single ConnectHandler session for all devices, send all configuration commands in one block, and trust the output.","Use send_config_set for hostnames, but skip error handling because Netmiko automatically retries failed sessions."],
+c:0,e:"try/except isolates failures per device (the loop keeps going), and a verification command after config (e.g. show run | include hostname) confirms the change actually took — you can't just assume the push worked."},
+
+{t:"Netmiko",q:"After your script configures multiple routers, why is it important to call disconnect() for each Netmiko session?",
+o:["To flush all CLI output buffers so the device writes the running-config to NVRAM automatically.","To release the device-side VTY/SSH resources and close the TCP/SSH transport cleanly, preventing session leaks and future login failures.","To keep the SSH channel open in the background so Netmiko can silently re-use it for other scripts later.","To temporarily suspend the session, leaving it available for fast reconnection without authentication."],
+c:1,e:"VTY lines are a finite, shared resource. Not disconnecting can exhaust available VTYs across repeated runs, locking out both future automation and an engineer trying to manually SSH in later."},
+
+{t:"NETCONF/YANG",q:"Which statement about the startup datastore in NETCONF is correct?",
+o:["It always contains a read-only backup of the running datastore.","It is loaded into running automatically after every &lt;commit&gt;.","It contains the configuration that is applied at device boot and can be updated by copying from running.","It is used only when a candidate datastore is not available."],
+c:2,e:"startup is the config loaded at boot — distinct and persistent, not auto-synced with running. It requires an explicit &lt;copy-config&gt; from running to startup (the NETCONF equivalent of 'write memory')."},
+
+{t:"NETCONF/YANG",q:"Which statement best describes the difference between a standard &lt;commit&gt; and a commit-confirmed in NETCONF?",
+o:["&lt;commit&gt; applies candidate to running immediately, while commit-confirmed applies candidate only after the session is closed.","&lt;commit&gt; requires manual confirmation from the user, while commit-confirmed is always permanent.","&lt;commit&gt; permanently applies candidate to running, while commit-confirmed applies it temporarily and automatically reverts unless a confirming &lt;commit&gt; is sent within a timeout.","&lt;commit&gt; can only be used on running datastore, while commit-confirmed can be used on startup."],
+c:2,e:"commit-confirmed is a safety net: it applies the change but auto-reverts if a confirming &lt;commit&gt; doesn't arrive within the timeout — protecting against changes that break management connectivity."},
+
+{t:"NETCONF/YANG",q:"Which NETCONF operation is used when retrieving configuration data from the running datastore on a Cisco IOS XE device?",
+o:["&lt;edit-config&gt;","&lt;get&gt;","&lt;commit&gt;","&lt;get-config&gt;","&lt;validate&gt;"],
+c:3,e:"&lt;get-config&gt; has a mandatory &lt;source&gt; (running/candidate/startup) and returns ONLY configuration. &lt;get&gt; returns config + operational state together, without targeting a specific named datastore."},
+
+{t:"NETCONF/YANG",q:"Which statement about the &lt;get&gt; operation in NETCONF is correct when monitoring Cisco devices?",
+o:["&lt;get&gt; retrieves only configuration data from the running datastore.","&lt;get&gt; retrieves both configuration and operational data.","&lt;get&gt; modifies operational state but does not affect configuration.","&lt;get&gt; can be used only with native Cisco YANG models."],
+c:1,e:"&lt;get&gt; returns the union of config + operational state in one response — unlike &lt;get-config&gt;, which returns only config from one named datastore."},
+
+{t:"RESTCONF",q:"When adding a new interface in the ietf-interface list using RESTCONF, which method should you use and why?",
+o:["PUT, because it always creates a new list entry without checking if it exists.","PUT, because it appends the new list entry to the list, even if an entry with the same key is present.","POST, because it creates a new list entry under the interfaces container, and will fail if an entry with the same key exists.","POST, because it replaces the entire interfaces container with only the new entry."],
+c:2,e:"POST to a collection creates a new child and returns 409 Conflict if the key already exists (safe behavior). PUT to a specific path creates OR fully replaces that exact resource — idempotent, but overwrites."},
+
+{t:"RESTCONF",q:"Which statement about RESTCONF datastore usage on Cisco IOS XE Software is correct?",
+o:["RESTCONF supports candidate and startup datastores, but they require explicit commit commands.","RESTCONF automatically saves all changes from running into startup after each PUT or PATCH.","RESTCONF operates only on the running datastore, and every change takes effect immediately.","RESTCONF applies configuration to a temporary staging datastore that is later merged into running."],
+c:2,e:"On IOS XE, RESTCONF exposes neither candidate nor startup — only running, with immediate effect and no commit step. This differs from NETCONF, which can have candidate + commit-confirmed as a safety net."},
+
+{t:"RESTCONF",q:"An engineer queries interface data on a Cisco IOS XE router using RESTCONF. The reply shows that the interface is enabled in configuration but gives no information about counters or operational status. What is the most likely reason?",
+o:["The request used the wrong HTTP verb; RESTCONF requires POST to access operational data.","Operational state data is stored in ietf-interfaces:interfaces-state, which must be queried separately.","The device must be configured with RESTCONF operational enable in global config mode to return counters.","Native Cisco models always override IETF models, so counters are not available when IETF models are used."],
+c:1,e:"The 'interfaces' (config) and 'interfaces-state' (operational/counters) containers are separate YANG containers in the pre-NMDA model — a second GET against the -state container is required."},
+
+{t:"RESTCONF",q:"When retrieving interface operational state through RESTCONF on a Cisco device, which URI should be used according to the IETF Interfaces model?",
+o:["/restconf/data/Cisco-IOS-XE-native:native/interfaces-state","/restconf/data/ietf-interfaces:interfaces-state","/restconf/data/ietf-system:system-state/interfaces","/restconf/oper/ietf-interfaces:interfaces","/restconf/data/native-interfaces:oper-state"],
+c:1,e:"The 'interfaces-state' container belongs to the ietf-interfaces module (RFC 8343), accessed under the standard /restconf/data/ root. There's no '/restconf/oper/' root defined in RFC 8040."},
+
+{t:"Ansible",q:"In Ansible, what is the role of the rescue section when used inside a block?",
+o:["It runs only if a task in the block fails, typically to roll back or apply an alternative configuration.","It runs after the block completes successfully to clean up temporary changes.","It runs before the block tasks to prepare the device for configuration.","It runs only if a task in the block fails, but it cannot make configuration changes."],
+c:0,e:"rescue is Ansible's equivalent of an except block — it fires only on failure inside the block, and can contain ordinary tasks (including config rollback) with no restriction on module type."},
+
+{t:"Ansible",q:"Why is it important to normalize collected device data before comparing it against a baseline in Ansible?",
+o:["To reduce differences that are caused by dynamic values such as counters or timestamps.","To speed up SSH connections between the control node and devices.","To allow Ansible to automatically push corrections when drift is detected.","To convert device configurations into YAML files for version control."],
+c:0,e:"Without normalization, counters/timestamps always change, generating false-positive 'drift' on every run — this causes alert fatigue and leads the team to ignore the report."},
+
+{t:"Ansible",q:"You configure daily drift detection for Cisco IOS XR routers. One morning, the report shows that the login banner changed, interface counters increased, and the hostname stayed the same. Which of these differences should normally be considered significant drift?",
+o:["Increased interface counters","Hostname unchanged","Modified login banner","All three are equally significant"],
+c:2,e:"Counters always rise (expected noise); an unchanged hostname isn't drift by definition. A modified banner is a real configuration change — it could signal an unauthorized change."},
+
+{t:"Ansible",q:"You must update 20 Cisco IOS XE routers with a new SNMP community string. To minimize risk, you decide to use serial: 2 and max_fail_percentage: 10. What does this configuration achieve?",
+o:["The playbook updates two routers simultaneously and stops if more than two routers fail.","The playbook updates two routers simultaneously and stops if exactly two routers fail.","The playbook updates two routers simultaneously and stops if more than 10 routers fail.","The playbook updates one router simultaneously and stops if more than two routers fail."],
+c:0,e:"serial:2 = batch size. max_fail_percentage:10 = 10% of 20 hosts = 2 failures; the play stops when that threshold is EXCEEDED (i.e. on the 3rd failure), not on exactly 2."},
+
+{t:"IOS XE",q:"You want to open Guest Shell for hands-on work. Which access methods are valid?",
+o:["From Cisco IOS XE CLI with 'guestshell run bash', and by SSH to the Guest Shell IP.","Use a 'request platform software system shell' to enter the host Linux, then chroot into Guest Shell.","Use NETCONF to open a session that maps to a Bash shell via a 'cli-over-netconf' feature.","Run an 'app-hosting connect appid guestshell session' to get an interactive Bash.","Call a RESTCONF HTTPS 'exec' endpoint to spawn a shell inside the device."],
+c:0,e:"'guestshell run bash' (or 'guestshell enable' + 'guestshell') is the documented CLI path. Guest Shell can also take direct SSH if configured with its own IP. The other options describe mechanisms that don't exist or serve a different purpose (third-party IOx, a restricted diagnostic shell)."},
+
+{t:"IOS XE",q:"How does Cisco Guest Shell connect to the underlying Cisco IOS XE system and external networks?",
+o:["It uses a dedicated physical interface reserved only for the container.","It communicates through a virtual interface that links Cisco IOS XE and the Guest Shell container.","It requires port forwarding from the device's management interface to the container.","It relies on an external VM that proxies all traffic between Cisco IOS XE and Guest Shell.","It directly shares the kernel network stack of Cisco IOS XE Software without any separation."],
+c:1,e:"Guest Shell uses a VirtualPortGroup on the IOS XE side, paired with a virtual interface inside the container — with NAT/routing going out through a physical interface. This gives real connectivity while keeping the container isolated."},
+
+{t:"IOS XE",q:"What is the main difference between an EEM applet and an EEM Tcl or Python policy?",
+o:["An applet is configured directly in the CLI, while a Tcl or Python policy is a script saved in device storage and registered with EEM.","An applet can only detect syslog events, while a Tcl or Python policy can detect all event types.","An applet is supported only on Cisco IOS XE Software, while Tcl and Python policies are supported only on Cisco NX-OS.","An applet requires an external server to execute, while Tcl and Python policies run locally on the device."],
+c:0,e:"An applet lives entirely in the running-config with simple numbered actions. A Tcl/Python policy is an actual script file on device storage, registered via 'event manager policy' — used when logic is too complex for an applet."},
+
+{t:"ZTP",q:"An enterprise wants to deploy ZTP but is concerned about exposing management credentials in plaintext during the provisioning process. Which adjustment ensures that the sensitive configuration is protected?",
+o:["Configure DHCP option 151 instead of option 150.","Use Secure ZTP with HTTPS instead of TFTP.","Configure multiple DHCP pools for redundancy.","Store the configuration file directly in NVRAM before shipping the router."],
+c:1,e:"Traditional TFTP transfers the bootstrap config in plaintext. Secure ZTP moves the transport to HTTPS with certificate-based trust, closing that exposure."},
+
+{t:"SD-WAN",q:"Which option correctly describes Cisco Catalyst SD-WAN ZTP characteristics?",
+o:["The public ZTP SD-WAN Validator can redirect to either cloud-hosted or on-premises controllers. Devices are linked to the organization at the time of order via Smart Account, and additional devices can be associated through the PnP Connect portal.","The Validator only redirects to cloud controllers. WAN edge routers connect to the organization during the first boot, and additional routers must be added through the SD-WAN Manager.","The Validator only redirects to on-premises controllers, and routers are linked using device templates.","The Validator only redirects to on-premises controllers. WAN edge routers connect to the organization during the first boot, and additional routers must be added through the SD-WAN Manager."],
+c:0,e:"The Validator has redirection flexibility (cloud OR on-prem). Smart Account links the serial number to the organization at order time; PnP Connect is where additional devices are associated later — not SD-WAN Manager."},
+
+{t:"SD-WAN",q:"During the zero-touch provisioning of Cisco Catalyst SD-WAN devices, what action ensures that the controller information is delivered to the ZTP server?",
+o:["Enter the SD-WAN Validator profile in the Cisco PnP portal.","Upload device serial numbers only to SD-WAN Manager.","Configure DHCP Option 43 to point to Catalyst Center.","Add the organization's Smart Account in Cisco Commerce Workspace."],
+c:0,e:"Smart Account associates the device with the organization; but WHERE to redirect it (which Validator) is told by the profile entered in the PnP portal. Option 43 belongs to the Catalyst Center/campus flow, not SD-WAN."},
+
+{t:"SD-WAN",q:"During the zero-touch provisioning of Cisco Catalyst SD-WAN devices, what happens in the initial control communication phase?",
+o:["The WAN Edge connects to the SD-WAN Manager, transmitting its system IP and organization name using the assigned system IP.","The WAN Edge establishes a temporary connection to the SD-WAN Validator, identifies itself using the chassis ID and serial number, and utilizes a null system IP address (0.0.0.0).","The WAN Edge connects to the SD-WAN Manager, transmitting its loopback IP and organization name using the assigned system ID.","The WAN Edge registers with the PnP cloud, sending the MAC address and site ID using its management IP."],
+c:1,e:"At this initial stage the device has no assigned system IP yet — it can only identify itself by hardware (chassis ID/serial). The Validator's only job is to authenticate and redirect; system IP comes later, with SD-WAN Manager/vSmart."},
+
+{t:"SD-WAN",q:"When a Cisco device boots for the first time, what does the embedded Cisco PnP IOS Agent do to enable Day-0 automation?",
+o:["Starts an SSH session to a fixed IP address so an engineer can manually push CLI commands.","Uses the Cisco PnP protocol over HTTPS to discover a Controller and register with Cisco Catalyst Center.","Downloads its configuration from a TFTP server referenced by DHCP option 66.","Uses the Cisco PnP protocol over SSH to discover a Controller and register with Cisco Catalyst Center."],
+c:1,e:"The PnP Agent uses PnP-over-HTTPS (not TFTP, not SSH) for discovery and registration with Catalyst Center — part of the same 'Secure ZTP' principle of avoiding plaintext transport."},
+
+{t:"SD-WAN",q:"Which statement best describes the provisioning step in the PnP deployment workflow?",
+o:["It occurs after the device is assigned to a site, applies device-specific settings, and, once services are up, the device uses Cisco Network PnP to obtain its configuration.","It occurs before site assignment, allows modifications to most design parameters, and configuration is applied manually through the console.","It is a design-phase activity where global templates are authored, and devices later retrieve configs via SNMP traps.","It occurs only during the first boot and requires a TFTP server to push the complete configuration interactively."],
+c:0,e:"The sequence is Design → Site assignment → Provisioning (device-specific settings) → delivery via PnP. Provisioning comes AFTER site assignment, not before."},
+
+{t:"SD-WAN",q:"Which two are the purposes of the interactive template simulation feature? (Choose two.)",
+o:["Validate how a CLI template renders using test variable values.","Push configurations directly to production devices.","Backup startup-config from devices for audit.","Detect template logic errors and mismatched variables before rollout to ensure seamless deployment.","Backup running-config from devices for audit."],
+c:[0,3],e:"Simulation is about testing rendering and logic BEFORE touching real devices — it never involves production push or config backup (which are separate audit/inventory functions)."},
+
+{t:"SD-WAN",q:"Which two sections are considered primary in the device template of the SD-WAN Manager? (Choose two.)",
+o:["Transport and Management default route","Service VPN","Transport and Management VPN","Service Route","General Information"],
+c:[1,2],e:"The two primary structural sections are Transport & Management VPN (VPN 0/512 — WAN/management) and Service VPN (VPN 1+ — LAN/service). 'General Information' is metadata, not one of these two sections."},
+
+{t:"SD-WAN",q:"What are the two valid feature template types used to create a complete device template? (Choose two.)",
+o:["NTP","AAA","Quality of service","OSPF","ISIS"],
+c:[0,1],e:"NTP and AAA belong to the 'Basic Information' category of the device template (alongside System, Logging, BFD, OMP, Security, Archive). OSPF belongs to the Transport/Service VPN section; QoS and IS-IS don't appear in this documented grouping."},
+
+{t:"SD-WAN",q:"In an overlay network, what is the best way to apply a single device template to multiple devices that require unique values, such as hostnames and IP addresses?",
+o:["Create a separate template for each device and hardcode its values.","Use a CSV where the first row lists variable names and each subsequent row provides values for a specific device.","Duplicate the template and replace variables with defaults.","Apply the same static values to all devices and manually edit them later."],
+c:1,e:"Same 'separate data from logic' principle seen in Netmiko/Jinja2: one template + a CSV with one row per device. Adding a device = adding a row, no template changes needed."},
+
+{t:"SD-WAN",q:"Which statement best describes how template operations influence template editing across multiple servers?",
+o:["You can edit feature templates on one SD-WAN Manager while an attach/detach operation is running on another.","The editing feature template is unavailable on the server performing the attach/detach operation, but other servers remain unaffected.","Feature template editing is completely locked across all SD-WAN Managers whenever any attach/detach operation is in progress.","If you begin editing a feature template on any server, all attach/detach operations will automatically pause."],
+c:2,e:"Because the cluster shares the same configuration database, the lock is cluster-wide (not just local to the node performing the operation) — it prevents inconsistent template state during attach/detach."},
+
+{t:"SD-Access/ISE",q:"What is the primary purpose of Security Groups using SGTs in SD-Access?",
+o:["To allocate IP addresses to endpoints dynamically","To control communication between entities and enforce segmentation within a virtual network","To provide WAN path selection and application-aware routing","To discover devices and automate switch image upgrades"],
+c:1,e:"SGTs implement micro-segmentation — controlling communication WITHIN a VN, independent of IP subnet — different from macro-segmentation (VN→VRF), which isolates entire routing domains."},
+
+{t:"SD-Access/ISE",q:"In a Cisco SD-Access environment, what is the primary role of Cisco ISE in relation to the Cisco Catalyst Center?",
+o:["It provisions fabric underlay routing and manages VXLAN overlays between fabric nodes.","It controls network access by managing user identities and shares identity or context information with the Cisco Catalyst Center.","It serves as the central SD-WAN controller for distributing policies across transport locations.","It acts as the network's DHCP/DNS server for endpoint addressing."],
+c:1,e:"ISE is the identity/policy engine (authenticates, classifies, assigns SGT); Catalyst Center orchestrates the fabric (underlay/overlay). Integration happens via pxGrid connecting the two."},
+
+{t:"SD-Access/ISE",q:"After establishing a pxGrid subscription between Cisco Catalyst Center and Cisco ISE, what capability is enabled?",
+o:["Cisco Catalyst Center can push VLAN assignments directly to Cisco ISE.","Cisco Catalyst Center automatically retrieves SGTs from Cisco ISE and updates its Scalable Groups.","Cisco ISE starts acquiring the IP addresses of devices from the Cisco Catalyst Center.","pxGrid enables Cisco Catalyst Center to create new SGTs inside Cisco ISE without synchronization."],
+c:1,e:"pxGrid is an active sync channel: ISE remains the SGT source of truth, and Catalyst Center reflects them as Scalable Groups in its own data model."},
+
+{t:"SD-Access/ISE",q:"In the Cisco Catalyst Center, how is macro segmentation implemented and represented on network devices?",
+o:["With SGTs enforced at access switches.","With virtual networks in the Cisco Catalyst Center that map to VRF instances on devices.","With VLANs and IP pools only, without using VRFs.","ACLs are applied exclusively at the border nodes."],
+c:1,e:"Macro-segmentation = VN (Catalyst Center design) → VRF (actual device implementation), creating fully isolated routing domains. SGT/ACL is the micro-segmentation layer, a different scope."},
+
+{t:"SD-Access/ISE",q:"During the validation of an SD-Access fabric, which check ensures that the micro-segmentation design correctly limits communication within a specific virtual network?",
+o:["Verifying that the virtual network names, such as 'Corp' or 'Guest,' match the high-level design.","Confirming that host onboarding definitions correctly map VLAN/IP pools to the appropriate virtual network and group identities.","Checking that the IP address pools are assigned to the correct global routing table.","Validating that the physical cabling of the fabric edge nodes follows the spine-and-leaf topology."],
+c:1,e:"Only this option actually touches micro-segmentation — it needs to confirm onboarding results in BOTH the right VN AND the right group identity (SGT); without that, SGACL enforcement won't behave as designed."},
+
+{t:"SD-Access/ISE",q:"How does the integration of SD-WAN Manager with Cisco ISE facilitate granular micro-segmentation across a WAN?",
+o:["It increases WAN link throughput by optimizing IP header compression.","It shares VPN context and SGTs inline within IPsec tunnels for consistent policy enforcement.","It allows the SD-WAN Manager to take over the role of the primary DNS server for the enterprise.","It provides a way to bypass VPN segmentation, allowing all users to access INFRA_VN."],
+c:1,e:"This extends the SD-Access model across the WAN: SGT travels inline within IPsec tunnels between sites, keeping policy enforcement consistent even when traffic crosses the WAN, not just within the local fabric."},
+
+{t:"Catalyst Center",q:"Which of the following is a mandatory requirement for utilizing the RBAC workflow in Cisco Catalyst Center?",
+o:["Cisco IOS XE device","Yamale Python Library installed","Yamale Ansible Library installed","Physical access to the Cisco Catalyst Center appliance"],
+c:1,e:"The user_role_workflow_manager Ansible module requires: Ansible installed, the PYTHON yamale library (pip install yamale) for schema validation, and the cisco.catalystcenter collection. Yamale is not an Ansible library."},
+
+{t:"Catalyst Center",q:"Which of the following represents a default role within Cisco Catalyst Center?",
+o:["GUEST-USER-ROLE","DEVELOPER-ROLE","AUDITOR-ROLE","NETWORK-ADMIN-ROLE"],
+c:3,e:"The three default roles are SUPER-ADMIN-ROLE, NETWORK-ADMIN-ROLE, and OBSERVER-ROLE. The other names sound plausible but aren't documented default roles."},
+
+{t:"Catalyst Center",q:"What is the primary function of the host_inventory_dnac1/hosts.yml file in the RBAC workflow?",
+o:["To define user email addresses","To store the user and role details","To specify connection details for the Cisco Catalyst Center instance","To validate user input against a schema"],
+c:2,e:"hosts.yml is the Ansible inventory — it tells you WHICH Catalyst Center to reach and HOW (host, credentials). User/role data lives in a separate file; schema validation is Yamale's job."},
+
+{t:"Catalyst Center",q:"Which tool is used to validate user input accuracy in playbooks before execution, as specified in the DevNet repository description?",
+o:["YAML linter","Jinja templating engine","Yamale-based schemas","Git version control"],
+c:2,e:"Yamale schemas validate input BEFORE the playbook runs, reducing human error — a YAML linter only checks syntax, not the expected structure/content."},
+
+{t:"Catalyst Center",q:"Which HTTP method and endpoint combination are used to initially authenticate and obtain a token for Catalyst Center API access?",
+o:["POST to /dna/system/api/v1/auth/token","GET to /dna/system/api/v1/auth/token","PUT to /dna/intent/api/v1/network-device","POST to /dna/intent/api/v1/auth/login"],
+c:0,e:"POST is correct because it creates a new token/session (a state-changing action). The documented path is /dna/system/api/v1/auth/token, using Basic Auth."},
+
+{t:"Catalyst Center",q:"What is the required method for authenticating with the Cisco Catalyst Center API to obtain an authorization token?",
+o:["Sending a GET request with an API key in the URL.","Using Basic Authentication with base64-encoded USERNAME:PASSWORD in a POST request.","Providing a client certificate in a PUT request.","Including a pre-shared key in the header of a DELETE request."],
+c:1,e:"The standard flow uses HTTP Basic Auth (base64 of username:password) in a POST call — this is exactly what curl -u does under the hood."},
+
+{t:"Catalyst Center",q:"When using the Catalyst Center API to query for a specific device ID, which header field is required to prove authentication?",
+o:["X-Auth-Token","Authorization-Barer","API-Key","Session-ID"],
+c:0,e:"Unlike the more common 'Authorization: Bearer' pattern, Catalyst Center specifically uses the X-Auth-Token header, obtained from the initial auth call."},
+
+{t:"Catalyst Center",q:"After initiating an image distribution task in Catalyst Center, why is it necessary to query the task API using the returned taskId?",
+o:["The task API is the only way to authenticate the device for the upgrade.","The taskId is required to decrypt the software image on the device.","The distribution API fails immediately if the task API is not called within 10 seconds.","The distribution API operates asynchronously, requiring a separate check for completion status."],
+c:3,e:"The initial response (200/202) only confirms the request was ACCEPTED, not that distribution finished. Since the operation runs in the background, you must poll the task API with the taskId to learn the real outcome."},
+
+{t:"Catalyst Center",q:"What does the Site Health API (within the Sites API) provide in Cisco Catalyst Center?",
+o:["The configuration templates applied to each site","A list of all devices assigned to each site","The health status of every site (area and building)","The software image versions running at each site","The VLAN and IP pool mappings for each site"],
+c:2,e:"Site Health is part of Assurance functionality — it reports an aggregated health score per site, not config, inventory, or software versions (which are different data domains)."},
+
+{t:"Catalyst Center",q:"Which of the following categories of network health information can be accessed using Cisco Catalyst Center APIs?",
+o:["Server Health, Application Health, Database Health.","Site Health, Network Health, Client Health.","Cloud Resource Health, Storage Health, Virtual Machine Health.","User Device Health, Firewall Health, Router Configuration Health."],
+c:1,e:"The three Assurance categories are Site (per-location aggregate), Network (infrastructure), and Client (endpoint experience) Health — a specific, consistent taxonomy for Catalyst Center."},
+
+{t:"Catalyst Center",q:"What is the primary purpose of the POST /dna/intent/api/v1/network-segmentation/policy/validate endpoint in a network automation workflow?",
+o:["To push a finalized segmentation policy to all fabric edge switches","To check the syntactic and semantic correctness of a policy configuration before it is deployed","To retrieve a list of all active security violations currently occurring in the network","To synchronize the security group tags between Cisco Catalyst Center and a third-party firewall"],
+c:1,e:"The '/validate' suffix is the key signal — it's a pre-deploy dry run (checks syntax AND semantics), in the same spirit as Jinja2's StrictUndefined or NETCONF's &lt;validate&gt; — it never performs the actual push."},
+
+{t:"Catalyst Center",q:"What is a primary operational benefit of using Cisco Catalyst Center APIs for the continuous monitoring and assurance of network policies?",
+o:["It allows network administrators to manage the network without requiring RBAC.","It enables the automated detection of policy violations or deviations from the intended network state.","It eliminates the need for network segmentation by using a single flat network for all devices.","It reduces the requirement for high-speed internet connectivity between branch sites."],
+c:1,e:"This is the assurance counterpart to drift detection: continuously comparing actual state vs. intended state and flagging real deviations (not noise) — same principle, applied to segmentation policy instead of raw config."},
+
+{t:"Catalyst Center",q:"How does Cisco AI Network Analytics generate and provide actionable insights?",
+o:["It operates entirely on your local device, analyzing manual log uploads without using telemetry or cloud services.","It collects anonymized telemetry from multiple networks on a cloud platform, applies machine learning to the event data, and sends insights and notifications to your Cisco Catalyst Center.","It identifies individual devices by name within each customer network and directly emails configuration changes to engineers.","It relies solely on scheduled SNMP polls and generates generic monthly reports without employing machine learning."],
+c:1,e:"Anonymized telemetry pooled across MANY networks in the cloud is what gives the ML baseline its statistical power — learning from just one isolated network would be much weaker. Insights are sent back to the customer's local Catalyst Center."},
+
+{t:"REST/API",q:"In REST APIs, what does an HTTP 409 error typically indicate, and how can it often be resolved?",
+o:["The request is unauthorized; retry with a valid token or session cookie.","The resource was not found; verify the endpoint path or ID.","There is a conflict; resolve it by reordering dependent requests or using idempotency keys.","The server encountered an unexpected condition; wait and try again later."],
+c:2,e:"409 = Conflict, the resource already exists or its current state clashes with the request (e.g. a POST creating an interface with a duplicate key). 401 is auth, 404 is not found, 500 is a server error."},
+
+{t:"REST/API",q:"What is a key advantage of using command-line tools such as curl?",
+o:["Curl automatically corrects invalid JSON in request bodies.","Curl lets you control headers, body, and transport precisely and view a byte-for-byte trace of what is sent.","Curl hide request headers to simplify debugging.","Curl can only be used for POST requests."],
+c:1,e:"curl -v shows exactly what was sent/received, with no abstraction layer (requests, ncclient, Ansible modules) hiding the real issue — ideal for diagnosing whether it's format, auth, or a server-side error."},
+
+{t:"REST/API",q:"When troubleshooting a REST request, what are the first two steps you should take according to best practices? (Choose two.)",
+o:["Send the request repeatedly to see if it eventually passes.","Check the payload against the schema.","Disable authentication to isolate payload issues.","Use a JSON Schema validator or an OpenAPI tool to verify the payload.","Convert the payload to XML to avoid JSON parsing."],
+c:[1,3],e:"Validating the payload's structure/semantics is the first diagnostic instinct — done systematically with a real validation tool, not by repeated retries or disabling security."},
+
+{t:"REST/API",q:"What steps must you take to obtain a JWT (access) token?",
+o:["Send only an API key in the request header.","Log in with a username and password.","Register the device's IMEI number.","Use a refresh token without needing to sign in."],
+c:1,e:"The standard initial flow is authenticating with credentials (username/password) to obtain the access token (and often a refresh token alongside it). A refresh token only exists AFTER that initial login."},
+
+{t:"SD-WAN API",q:"A developer receives a JSON response from the SD-WAN Manager API endpoint /api/v1/vpn-svc/ipsec/policies. Which attribute should be inspected to verify the encryption algorithm being used for the ESP?",
+o:["pfs","anti-replay-window-size","esp-encryption","lifetime-sec"],
+c:2,e:"esp-encryption directly names the ESP encryption algorithm. pfs is about key exchange, anti-replay-window-size is replay protection, and lifetime-sec is SA duration — none describes the algorithm itself."},
+
+{t:"SD-WAN API",q:"When performing a software upgrade on SD-WAN devices, which information is required in the body of the install API POST request?",
+o:["adminUsername, adminPassword, and rebootTime","deviceIP, deviceId, version, and versionType","siteId, systemIp, and locationCoordinates","interfaceId, bandwidth, and qosPolicy"],
+c:1,e:"The payload needs to identify the target (deviceId/deviceIP) and the version to install (version/versionType). Credentials aren't resent per call, and site/interface data belong to other APIs."},
+
+{t:"SD-WAN API",q:"After initiating a partition change (software activation) on an SD-WAN device, which specific data point in the response is used to monitor progress?",
+o:["process ID","device UUID","new software version number","HTTP status code 200"],
+c:0,e:"The standard async pattern: the initial POST returns a process ID (task ID) used to poll a separate status endpoint. A 200 only confirms the request was accepted, not that the operation finished."},
+
+{t:"SD-WAN API",q:"Which of the following is a primary use case for the SD-WAN Manager API?",
+o:["Managing physical security systems and access control.","Automating the provisioning of Cisco Catalyst SD-WAN overlays and enhancing network visibility.","Performing deep packet inspection for all encrypted traffic.","Directly controlling individual end-user device settings."],
+c:1,e:"Overlay provisioning (templates, ZTP, policies, software) plus operational visibility (monitoring, stats) is the documented core of the API — not physical security, DPI, or end-user devices."},
+
+{t:"SD-WAN API",q:"In the SD-WAN Manager API authentication process, what is the role of the JSESSIONID and the session token?",
+o:["The JSESSIONID encrypts the API requests, while the token decrypts the responses.","The JSESSIONID tracks the session for stateless REST APIs, and the token provides an additional layer of authentication for subsequent API calls.","Both JSESSIONID and the token are used interchangeably for initial user login.","The JSESSIONID is for internal system logging, and the token is for external vendor integration."],
+c:1,e:"JSESSIONID (cookie) tracks 'who you are'; the CSRF/XSRF token (fetched afterward, using that cookie) proves each write request is legitimate — two complementary layers, not interchangeable ones."},
+
+{t:"SD-WAN API",q:"After receiving the session cookie, which API endpoint must you call with a GET request to retrieve the session token?",
+o:["/dataservice/auth/token","/dataservice/client/token","/dataservice/session/token","/dataservice/device/token","/dataservice/client/session"],
+c:1,e:"The documented SD-WAN Manager path is /dataservice/client/token — don't confuse it with Catalyst Center's auth pattern (/dna/system/api/v1/auth/token), a different platform entirely."},
+
+{t:"SD-WAN API",q:"Which API call retrieves the list of available software images on an SD-WAN Manager instance?",
+o:["POST https://{manager-ip}/dataservice/device/action/software","PUT https://{manager-ip}/dataservice/device/action/install","GET https://{manager-ip}/dataservice/device/action/status","GET https://{manager-ip}/dataservice/device/action/software"],
+c:3,e:"Retrieving an existing list is always GET. /device/action/software is the correct resource for listing images; /install triggers installation, /status checks progress of an ongoing action."},
+
+{t:"Webhooks/Telemetry",q:"How does the SD-WAN Manager leverage webhooks to provide real-time alarm notifications, contrasting with traditional REST API polling?",
+o:["Webhooks require the external system to frequently poll the SD-WAN Manager for alarm updates.","Webhooks enable SD-WAN Manager to send an HTTP POST request to the external system in real time when an alarm is received.","Webhooks provide an external system with a mechanism to query the SD-WAN Manager database for alarms directly.","Webhooks are used to configure alarm thresholds within SD-WAN Manager, not to send notifications."],
+c:1,e:"Webhooks flip the direction: the PROVIDER (SD-WAN Manager) initiates the POST as soon as the event occurs, eliminating the latency and waste of traditional polling."},
+
+{t:"Webhooks/Telemetry",q:"What is the primary mechanism by which webhooks facilitate communication between a provider and a consuming application?",
+o:["The consuming application frequently polls the provider for new data.","The provider initiates an asynchronous action, sending a JSON payload to the consuming application when an event occurs.","The provider stores data in a centralized database for the consuming application to access.","The consuming application establishes a continuous, persistent connection to the provider for real-time updates."],
+c:1,e:"Provider-initiated asynchronous push via HTTP POST — unlike polling (consumer pull), shared storage (still needs a query), or a persistent WebSocket-style connection."},
+
+{t:"Webhooks/Telemetry",q:"When a webhook event is sent over the internet, which security measure protects the data in transit?",
+o:["Data is compressed to reduce exposure during transmission.","The consuming application is added to a source IP allow list.","The event is encrypted with TLS and a secret token.","All webhook communications are routed through a VPN."],
+c:2,e:"TLS protects confidentiality/integrity in transit; a secret token (HMAC-style signature) lets the receiver verify the event genuinely came from the legitimate provider — two complementary protections."},
+
+{t:"Webhooks/Telemetry",q:"What is a primary operational benefit of using streaming telemetry over traditional SNMP for network monitoring?",
+o:["Streaming telemetry requires less initial configuration on network devices.","Streaming telemetry uses a pull-based data retrieval mechanism.","Streaming telemetry provides data at higher rates and scales using YANG models.","Streaming telemetry is primarily designed for historical data analysis."],
+c:2,e:"Push-based, high granularity (sub-second), and YANG-modeled (the same model shared with NETCONF/RESTCONF) — versus SNMP's slower polling and more limited MIB structure."},
+
+{t:"Webhooks/Telemetry",q:"Why is streaming telemetry preferred over traditional SNMP polling for real-time anomaly detection in AI-driven environments?",
+o:["It provides granular, sub-second data updates necessary for immediate identification of subtle attack patterns.","It allows for the hardcoding of API keys within the network device firmware to simplify the orchestration process.","It eliminates the need for XAI by providing human-readable summaries of every packet.","It ensures that only authorized users can access the Git repository used for the network's Source of Truth."],
+c:0,e:"AI-driven anomaly detection needs fine granularity to recognize a subtle pattern as it forms — SNMP polling would smooth over or entirely miss short-lived anomalous behavior between polls."},
+
+{t:"Assurance",q:"Which statement best describes ThousandEyes' role in Predictive Networks?",
+o:["It only addresses problems after outages have occurred.","It effectively manages user identities and access control policies.","It forecasts network issues and plans bandwidth to optimize application performance.","It replaces physical routers with virtual switches, enhancing network efficiency and flexibility."],
+c:2,e:"ThousandEyes extends visibility beyond the managed network (internet paths, cloud, SaaS), correlating data to forecast degradation BEFORE it becomes an outage — the opposite of being purely reactive."},
+
+{t:"Assurance",q:"What is the main advantage of a Network Health Diagnosis?",
+o:["It automatically provisions new circuits without requiring assessment.","It encrypts all user traffic to prevent eavesdropping.","It focuses exclusively on upgrading hardware to increase throughput.","It reduces troubleshooting time and costs while evaluating application and circuit performance."],
+c:3,e:"It automatically correlates diagnostic signals (instead of an engineer manually cross-referencing circuit and application data), speeding root-cause identification and lowering operational cost per incident."},
+
+{t:"AI/Security",q:"Which mechanism characterizes a backdoor attack within the context of dataset poisoning?",
+o:["Altering packet timing and size to cause a false negative during the production inference phase.","Inserting a hidden trigger pattern into training data to cause specific future misclassifications when that pattern is present.","Flooding the network with simulated attacks to trick the AI into shutting down legitimate services.","Systematically querying the model and analyzing response patterns to reconstruct the underlying training data."],
+c:1,e:"A backdoor attack is stealthy by design: the model behaves normally on everything except when a specific trigger planted during training appears — only then does it fire the attacker's chosen misclassification."},
+
+{t:"AI/Security",q:"Which technique allows an adversary to extract sensitive information about internal network structures without direct access to the AI's source code?",
+o:["Injecting false logs into the transport mechanism to hide a data exfiltration event.","Systematically querying the model with varied inputs and analyzing the outputs to reconstruct training data.","Using MTLS to intercept and modify commands between the AI agent and the network device.","Implementing GitOps workflows to version control the network's Source of Truth."],
+c:1,e:"Model extraction/membership inference: black-box access via input/output alone is enough — no need to breach the source code. mTLS, notably, is defensive (prevents MITM), not an attack vector."},
+
+{t:"AI/Security",q:"What is the primary security risk when an AI agent operates without the principle of least privilege in a network orchestration environment?",
+o:["The AI model experiences data drift due to naturally changing network conditions and user behaviors.","The breach of the automation server grants an attacker unrestricted administrative control over the entire network fabric.","The model becomes susceptible to inversion attacks that reveal the exact hardware versions of data center switches.","The system fails to provide explainable evidence for its automated decisions, leading to automation bias."],
+c:1,e:"Without least privilege, a breach of the automation server/agent inherits WHATEVER access that agent had — if that's unrestricted admin, a contained incident becomes a full network compromise."},
+
+{t:"Copilot",q:"Which of the following is a best practice when using GitHub Copilot?",
+o:["Accept all suggestions without review.","Disable comments to improve accuracy.","Review and test the generated code before using it in production.","Use Copilot suggestions as final production code without testing."],
+c:2,e:"The same 'verify before you trust it' principle seen with StrictUndefined, Yamale, and NETCONF's &lt;validate&gt; — AI-generated code needs review and testing before it goes to production."},
+
+{t:"Copilot",q:"Which task is the GitHub Copilot best suited for?",
+o:["Deploying code to a production environment","Deploying code to a test environment","Replacing developers entirely","Writing repetitive and boilerplate code"],
+c:3,e:"Copilot has no deployment function at all — it's an in-editor code-generation assistant. Its real strength is accelerating repetitive, well-known patterns (scaffolding, common loops, imports), not replacing human judgment."},
+
+{t:"Copilot",q:"Which statement best describes a limitation of GitHub Copilot?",
+o:["It always produces optimized code.","It cannot work with any programming language.","It can be used only on the GitHub website.","It might not always produce correct code and requires a review."],
+c:3,e:"This is exactly why 'review and test' is a best practice: Copilot generates statistically plausible code, not code verified against your specific requirements — it can contain subtle bugs even when it looks correct."},
+
+{t:"Copilot",q:"What type of input does GitHub Copilot use to generate code suggestions?",
+o:["Existing code and comments written by the developer","Only the filename","Previously compiled programs","User keyboard shortcuts"],
+c:0,e:"Copilot analyzes surrounding code plus comments (as explicit intent signals) — which is exactly why 'disable comments' would be counterproductive, not a best practice."},
+
+{t:"Copilot",q:"How do natural language comments influence the 'comment-to-code' workflow?",
+o:["Ignored by the AI to focus strictly on the syntax of the programming language.","Serve only as documentation for other human engineers and do not affect AI output.","Provide the AI with context and intent, guiding it to generate specific blocks of logic.","Automatically converted into encrypted metadata for security purposes."],
+c:2,e:"The comment acts as a natural-language spec the AI tries to satisfy with matching code — which is why the clarity and quality of the comment directly influences the quality of the suggestion."},
+
+{t:"MCP/AI",q:"What is the primary wire format used for information exchange between MCP clients and servers?",
+o:["XML-RPC","SOAP","JSON-RPC 2.0","RESTful API calls exclusively"],
+c:2,e:"MCP uses JSON-RPC 2.0 as its message format — lightweight, well-established, and transport-agnostic (can run over stdio or HTTP), unlike REST (resource-oriented) or the heavier XML-based standards."},
+
+{t:"MCP/AI",q:"What is the primary purpose of the MCP in integrating AI-driven applications with existing infrastructure?",
+o:["To exclusively manage network configurations for Cisco devices.","To replace all custom integration code with a single, universal API.","To establish real-time data streaming between AI agents and Kafka or Kinesis.","To provide a standardized interface for AI agents to discover, request, and invoke capabilities on various service or tool-based systems."],
+c:3,e:"MCP is a common interface layer (discover → describe → invoke) sitting in front of varied systems — it doesn't eliminate integration work (each MCP server still has to be built), nor is it restricted to Cisco or to streaming."},
+
+{t:"MCP/AI",q:"Which statement accurately describes the architecture and communication between an MCP client and server?",
+o:["An MCP server connects to multiple MCP clients using a many-to-one communication model.","MCP clients and servers primarily communicate using proprietary binary protocols for enhanced security.","Each MCP client establishes a one-to-one connection with each MCP server it interacts with, using language-specific SDKs.","MCP servers are embedded within AI applications, while MCP clients are standalone services."],
+c:2,e:"Each client-server connection is dedicated (one-to-one), not a shared channel. The client is embedded in the AI application (not the reverse), using language SDKs (Python/TypeScript) to implement either side."},
+
+{t:"MCP/AI",q:"How does the schema-driven approach benefit AI agents interacting with MCP servers?",
+o:["It enforces a strict, static set of predefined commands for all AI agents.","It eliminates the need for any form of data validation or type checking.","It enables dynamic discovery and invocation of capabilities without prior hardcoding or manual configuration.","It restricts AI agents to interacting with only a single, pre-approved tool at a time."],
+c:2,e:"The schema is self-describing (via tools/list and similar calls) — it lets an agent understand and use a tool it has NEVER seen before, without prior manual integration. It also enables type checking, the opposite of eliminating it."},
+
+{t:"YANG",q:"Which of the following is the main attribute of the YANG data modeling language?",
+o:["It only defines proprietary vendor-specific constructs.","It supports extensibility through augmentation.","It only works with proprietary network management protocols.","It stores data in flat, non-hierarchical structures."],
+c:1,e:"The augment statement lets a module add nodes into another module's hierarchy without modifying the original — this is what lets vendors extend standard IETF models (like ietf-interfaces) with native capabilities, and what lets OpenConfig models coexist alongside IETF models."},
+
+{t:"YANG",q:"Who initiated the OpenConfig working group, which focuses on addressing the lack of common interfaces and APIs for network management?",
+o:["Cisco","IETF","Google","Microsoft"],
+c:2,e:"OpenConfig was initiated by network operators, with Google as the founding/driving member — an operator-led effort for vendor-neutral YANG models, distinct from IETF's own standards process. Cisco supports OpenConfig models but did not found the working group."},
+
+{t:"YANG",q:"Which payload formats are supported by NETCONF and RESTCONF in YANG Suite's Protocol Explorer?",
+o:["NETCONF supports XML only, while RESTCONF supports both XML and JSON.","NETCONF supports JSON only, while RESTCONF supports XML only.","Both NETCONF and RESTCONF support XML only.","Both NETCONF and RESTCONF support JSON only."],
+c:0,e:"NETCONF (RFC 6241) is XML-only by protocol design. RESTCONF (RFC 8040) supports both XML and JSON, selected via Content-Type/Accept headers — JSON is commonly preferred since it's lighter-weight for typical REST/web tooling."},
+
+{t:"YANG",q:"What is the primary purpose of YANG validators?",
+o:["Compile YANG modules to create executable device configurations.","Monitor real-time traffic flows within a network.","Verify the correctness of YANG modules by identifying syntax errors and resolving object dependency issues.","Convert YANG models directly into JSON or XML payloads for NETCONF or RESTCONF."],
+c:2,e:"Validators (like pyang) check that a .yang module file is syntactically well-formed and that cross-module references (imports, includes, augments) actually resolve — catching model-design problems before the model is ever used to generate real payloads."},
+
+{t:"YANG",q:"What is the main purpose of operational models in network automation?",
+o:["To allow programmatic toggling of settings and configuration of device features.","To define the data representing the device's current state and statistics in a structured format.","To replace manual CLI input for all network commands.","To provide vendor-specific commands for device management."],
+c:1,e:"Operational models represent read-only state (counters, oper-status, protocol states) in a structured, predictable hierarchy — the counterpart to configuration models, which express intended/desired state instead."},
+
+{t:"YANG",q:"Which of the following is a key feature of the YANG data modeling language?",
+o:["It only supports proprietary vendor-specific constructs.","It stores data in flat, non-hierarchical structures.","It enforces rules to validate configuration data.","It is primarily designed for SNMP protocol integration."],
+c:2,e:"YANG has built-in constraint mechanisms — type restrictions, must/when statements, mandatory/unique/key — that validate configuration data directly at the model level. This is what NETCONF's &lt;validate&gt; and semantic payload validation actually check against."},
+
+{t:"YANG",q:"What is the primary issue that data models aim to solve in network configuration, particularly for multi-vendor environments?",
+o:["Lack of network security protocols.","Inability to use custom scripts.","Time-consuming, repetitive, and error-prone traditional CLI commands.","High cost of network devices."],
+c:2,e:"Standardized YANG models give a consistent structural representation of config/state independent of vendor CLI syntax — replacing fragile, vendor-specific CLI screen-scraping with structured, predictable, portable automation."},
+
+{t:"YANG",q:"What does the pyang -f tree ietf-interfaces.yang command do?",
+o:["It installs the YANG module on a network device.","It builds a tree representation of the YANG module.","It converts the YANG module into JSON format.","It validates the YANG module against NETCONF configuration data."],
+c:1,e:"The -f tree flag renders the module's hierarchical structure in a compact, human-readable text format — showing containers, lists, leaves, and rw/ro (config vs. operational) markers. It's a local, offline inspection tool, not a device-install or data-validation mechanism."},
+
+{t:"YANG",q:"What is the structural format used in YANG data modeling?",
+o:["Flat tabular format","Tree structured","Ring structured","Mesh structured"],
+c:1,e:"YANG organizes data hierarchically: module → containers → lists (keyed entries) → leaves, with every node having exactly one parent — the defining property of a tree, not a flat, ring, or mesh structure."},
+
+{t:"Ansible",q:"Which of the following are the components of an Ansible playbook? (Choose three.)",
+o:["Play name","Users","Modules","Connection","Variables","Gather Functions"],
+c:[0,2,4],e:"Play name (the name: label), Modules (the actual units of work like ios_config), and Variables (vars:/host vars/register-captured facts) are core structural building blocks. 'Users' and 'Gather Functions' aren't real playbook components, and 'Connection' is a real directive but not commonly grouped with these three as a core structural category."},
+
+{t:"Netmiko",q:"In a Python automation script with Netmiko, which method should you use to run an operational command like show ip interface brief and capture the output for further processing?",
+o:["send_config_set()","push_commands()","send_command()","execute_ops()","show_cli()"],
+c:2,e:"send_command() is purpose-built for exec-mode/operational show commands — it waits intelligently for the prompt and returns the output as a string for further parsing. push_commands(), execute_ops(), and show_cli() aren't real Netmiko methods."},
+
+{t:"Netmiko",q:"You need to automate login to 10 switches and run the same command on each device. Which is the correct way to scale your Python script with Netmiko?",
+o:["Write 10 separate scripts, one for each switch.","Use send_config_set() with multiple IP addresses in one string.","Store device details in a list of dictionaries and loop through them with ConnectHandler().","Run is_alive() on the first switch and assume that the others are reachable."],
+c:2,e:"Device data lives separately from script logic (a list of dicts), looped through with a fresh ConnectHandler session per device — scaling to more switches just means adding entries to the list, not rewriting the script."},
+
+{t:"RESTCONF",q:"What is the key difference between PUT and PATCH in RESTCONF?",
+o:["PUT can only create new resources, while PATCH can only delete existing fields.","PUT applies only to configuration data, while PATCH applies only to operational data.","PUT replaces the entire resource with the new configuration, while PATCH modifies only the specified fields of the resource.","PUT requires authentication, while PATCH does not.","PUT can be used only on the running datastore, while PATCH can be used on both running and startup."],
+c:2,e:"PUT is a full replacement — any field omitted from the payload gets removed. PATCH only touches the specified fields, leaving everything else on the resource untouched — much safer for targeted updates."},
+
+{t:"NETCONF/YANG",q:"Which NETCONF operation is used to apply changes prepared in the candidate datastore to the running datastore?",
+o:["&lt;edit-config&gt;","&lt;commit&gt;","&lt;copy-config&gt;","&lt;validate&gt;","&lt;lock&gt;"],
+c:1,e:"&lt;commit&gt; takes everything staged in candidate and applies it to running. &lt;edit-config&gt; stages changes into candidate; &lt;copy-config&gt; copies an entire datastore wholesale (e.g. running to startup); &lt;validate&gt; checks correctness without applying; &lt;lock&gt; prevents concurrent modification."},
+
+{t:"RESTCONF",q:"An engineer sends a RESTCONF GET request to retrieve interface statistics. The request is accepted, but the response is HTTP/1.1 404 Not Found. What is most likely the cause?",
+o:["The RESTCONF feature is disabled globally on the device.","The requested URI path does not exist in the YANG model, for example, the interface name is invalid.","The router rejected the connection because the user did not present a valid SSH key.","The RBAC policy blocked access to the resource, which always results in a 404 error.","The request was sent using XML instead of JSON, which RESTCONF does not allow."],
+c:1,e:"A 404 means the exact path/key combination doesn't exist — most commonly a bad key value (e.g. referencing an interface name that isn't on the device), even though the container/list structure itself is valid."},
+
+{t:"ZTP",q:"A Cisco router boots and receives a DHCP offer with Your-IP, Subnet Mask, Option 67 (Bootfile), and Option 150 (TFTP Server) all present, but ZTP does not complete. What is the most likely cause?",
+o:["The DHCP server did not include option 67.","The DHCP server did not provide a default gateway.","The client-identifier does not match the router's serial number.","The configuration file exceeds the router's memory limit.","The router requires an HTTPS server instead of TFTP."],
+c:1,e:"Everything needed for the TFTP bootstrap is present except a default gateway. Without one, the router can't route to the TFTP server if it's off the local subnet — the DHCP handshake succeeds but the actual config fetch fails."},
+
+{t:"Ansible",q:"Which statement best describes the difference between using the ios_config and ios_bgp modules in Ansible?",
+o:["ios_config applies raw CLI lines, while ios_bgp describes the desired BGP state in structured form.","ios_config can configure BGP neighbors directly, while ios_bgp requires you to include CLI commands.","ios_config always re-applies configuration, while ios_bgp checks the existing state before making changes.","ios_config only works with Cisco IOS XE Software, while ios_bgp supports Cisco IOS XE Software, Cisco IOS XR Software, and Cisco NX-OS.","ios_config saves changes automatically to startup-config, while ios_bgp only modifies running-config."],
+c:0,e:"ios_config is a generic module pushing literal CLI text (like send_config_set() in Netmiko). ios_bgp is a resource module taking structured, declarative parameters and internally translating them to the correct CLI, with built-in idempotency comparing desired vs. actual state."},
+
+{t:"IOS XE",q:"You need to create an EEM policy that only triggers if both an interface goes down AND a specific syslog message appears within the same time window. Which approach correctly implements this requirement?",
+o:["Use two event detectors in the same applet, combined with the and keyword, so both conditions must be true before actions run.","Configure two separate applets: one for the interface event and one for the syslog message. Both applets will automatically synchronize.","Use a timer event detector together with a syslog detector, which guarantees that an interface event will also be checked.","Register a Tcl script that reads the syslog buffer manually and compares it to the interface status, since detectors cannot be combined.","Use the event-default action in the applet, which forces the applet to wait for two conditions before it executes actions."],
+c:0,e:"EEM applets support multiple event statements combined with a trigger block using correlate event 1 and event 2 — the purpose-built mechanism for compound conditions, no external scripting needed."},
+
+{t:"ZTP",q:"What is the mandatory site prerequisite for ZTP of Cisco IOS XE WAN Edge devices?",
+o:["A local TFTP server hosting the device image.","The WAN Edge or gateway router can access a public DNS server.","A preconfigured static route to the SD-WAN Manager.","Console access to each device for Day-0 setup."],
+c:1,e:"The device needs to resolve the SD-WAN Validator's hostname before anything else in the ZTP flow can happen. Without a path to a DNS server, it can't even locate where to send its first ZTP request."},
+
+{t:"ZTP",q:"What two methods enable a new device to automatically find the Cisco PnP controller during Day-0 onboarding? (Choose two.)",
+o:["Configure the DHCP server to include Option 43, pointing to the controller's IP address.","Configure the DHCP server with a DNS domain so the device resolves pnpserver.&lt;your-domain&gt;.","Use cloud redirection, which is generally available for all customers.","Use a USB key to identify the controller without any WAN bootstrap.","Configure the DNS server with Option 43, pointing to the controller's IP address."],
+c:[0,1],e:"DHCP Option 43 carries the controller's IP directly in the DHCP offer. DNS-based discovery constructs pnpserver.&lt;domain&gt; from the DHCP-provided domain. Cloud redirection is a real fallback but isn't something you configure at the DHCP level like these two; Option 43 belongs to DHCP, not DNS; USB-key discovery isn't a real mechanism."},
+
+{t:"Jinja2",q:"What are the valid dependencies for deploying a Jinja2 project? (Choose two.)",
+o:["NETMIKO","Ansible Tower","PyYAML==6.0.2","Jinja==4.1.3","Jinja2==3.1.4"],
+c:[2,4],e:"The real PyPI package is Jinja2 (not 'Jinja'). PyYAML is the standard library providing the yaml module used to load variable data feeding the template — a natural companion dependency. Netmiko and Ansible Tower serve entirely different purposes and aren't Jinja2 project dependencies."},
+
+{t:"Catalyst Center",q:"Which of the following is a key benefit of managing Cisco Catalyst Center configuration through GitHub?",
+o:["Elimination of all network downtime","Complete version control and increased collaboration","Automatic hardware upgrades","Reduced the need for network security protocols"],
+c:1,e:"GitOps brings standard version-control benefits to network configuration: full change history with rollback capability, plus PR-based review/collaboration before changes reach production — the same principle behind CI/CD gates like iac-validate/iac-test."},
+
+{t:"Catalyst Center",q:"The Cisco Validated Playbooks repository organizes configuration workflows into which primary categories?",
+o:["Pre-installation, Installation, and Post-installation","Basic, Advanced, and Expert configurations","Day-0, Day-1, and Day-2 configurations","Hardware, Software, and Service configurations"],
+c:2,e:"Day-0 (bootstrap/ZTP/PnP), Day-1 (initial service/feature configuration), and Day-2 (ongoing operations: monitoring, drift detection, assurance, upgrades) is the standard lifecycle framing used across Cisco's automation ecosystem."},
+
+{t:"Jinja2",q:"What are the key differences between Jinja and Velocity?",
+o:["Jinja uses Python types while Velocity uses Java objects.","Jinja requires a JVM; Velocity runs without one.","Jinja is commonly used with Ansible and Nornir, while Velocity is well-suited for Java-centric platforms.","Velocity has a steeper learning curve than Jinja."],
+c:2,e:"This is an ecosystem-fit distinction: Jinja2 is Python-native and is the templating engine underneath Ansible and Nornir; Velocity is Java-based (Apache Velocity) and fits naturally in Java-centric platforms/JVM toolchains. (Note: it's actually Velocity that requires a JVM, not Jinja.)"},
+
+{t:"Catalyst Center",q:"Which of the following is required for user passwords in Cisco Catalyst Center?",
+o:["Passwords must contain only alphanumeric characters.","Passwords must be a minimum of eight characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.","Passwords must be updated annually.","Passwords permit the use of any number of consecutive identical characters."],
+c:1,e:"Current official documentation actually specifies a 9-character minimum with at least 3 of 4 character categories (not necessarily all four) — this option is the closest conceptual match among the choices given, but doesn't precisely match the latest published policy. Worth double-checking against the exact Catalyst Center version your source references."},
+
+{t:"SD-Access/ISE",q:"Which two services are provided by Cisco ISE within a Cisco SD-Access? (Choose two.)",
+o:["Authentication, Authorization, and Accounting (AAA) using RADIUS/TACACS+","Endpoint and user onboarding","BGP route reflection for the campus core","SD-WAN transport location extension between branches","WAN optimization (TCP acceleration)"],
+c:[0,1],e:"AAA via RADIUS/TACACS+ is ISE's foundational identity-verification function. Endpoint/user onboarding is where ISE profiles connecting devices and assigns them to the correct SGT/VN. BGP reflection, SD-WAN transport extension, and WAN optimization are all outside ISE's identity/policy scope entirely."},
+
+{t:"SD-Access/ISE",q:"Which virtual network facilitates global route communication at the SD-Access border in Cisco Catalyst Center SD-Access?",
+o:["CORP_VN—utilized for employee traffic management.","GUEST_VN—designated for guest internet access.","INFRA_VN—facilitates global route communication at the border.","MGMT_VN—reserved for device management purposes only."],
+c:2,e:"INFRA_VN is a default, system-reserved VN tied to the global routing table at the border node — the mechanism allowing the fabric to reach external/shared resources, unlike custom VNs (CORP_VN, GUEST_VN) which are deliberately isolated into their own VRFs."},
+
+{t:"REST/API",q:"Which practice best adheres to the guidelines for formatting dates, times, and numbers in API payloads?",
+o:["Use local date formats, such as 09/30/25 12:34 PM, and avoid quoting numbers.","Always enclose every number in quotes, regardless of the API's requirements.","Use ISO-8601 timestamps. Only quote numbers if required by the API, and quote numeric strings to maintain their format.","Use any clear date format and remove quotation marks from all values that appear numeric."],
+c:2,e:"ISO-8601 (e.g. 2025-09-30T12:34:00Z) is unambiguous and machine-parseable, unlike locale-dependent formats. Numbers stay unquoted unless the API requires a string type; values that only look numeric (like a ZIP code with a leading zero) should be quoted to preserve their exact format."},
+
+{t:"REST/API",q:"An API call returns 401 UNAUTHORIZED because the token has expired. What should the user do next?",
+o:["Retry the same request until it succeeds.","Request a new token by reinitiating the authentication process.","Clear the client cache and resend the request.","Change the HTTP method from GET to POST."],
+c:1,e:"401 specifically points at the authentication layer. Since the token is expired, the only real fix is obtaining a fresh one — via full login or a refresh token — then retrying with the new token. Retrying, clearing cache, or changing the HTTP verb do nothing to address an invalid token."},
+
+{t:"SD-WAN",q:"What actions does PPR (Predictive Path Recommendation) take when application traffic performance drops below expected levels or when service agreements are not met?",
+o:["It records the issue and awaits manual approval from an administrator before making any changes.","The affected application has been shut down to prevent further issues.","It proposes solutions and automatically implements necessary adjustments before users become aware of any issues.","All traffic is redirected to a standard path, irrespective of its performance."],
+c:2,e:"PPR extends application-aware routing with proactive, automated remediation — adjusting the traffic path based on real-time SLA metrics before users notice degradation, rather than just detecting and waiting for manual approval."},
+
+{t:"MCP/AI",q:"What is a key advantage of FastMCP in facilitating context exchange for AI agents?",
+o:["FastMCP exclusively uses stdio for all local and networked interactions.","FastMCP eliminates the need for serialization or deserialization.","FastMCP abstracts the complexities of the underlying MCP, enabling high-throughput and low-latency communication.","FastMCP requires manual data loading and custom integrations for dynamic context fetching."],
+c:2,e:"FastMCP wraps raw MCP protocol mechanics (JSON-RPC framing, transport negotiation, tool/resource registration) in a higher-level Python API — the same value proposition as Netmiko sitting on top of raw SSH, or Ansible resource modules on top of raw CLI strings."},
+
+{t:"Assurance",q:"What happens when AI-RRM is deactivated?",
+o:["AI-RRM continues to learn but ceases to implement changes.","The system requires complete manual configurations for all radios.","All RRM functions are entirely disabled.","RRM optimization returns to standard RRM protocols for channel allocation, transmit power, and channel bandwidth."],
+c:3,e:"AI-RRM is an optional ML-enhanced layer sitting on top of the standard RRM mechanism, not a replacement for it. Deactivating it means falling back to standard (non-AI) RRM — wireless service continues normally, just without the AI-driven optimization layer."},
+
+{t:"Assurance",q:"What is the described benefit of predictive analytics for network administrators, and what happens when deviations are detected?",
+o:["It automatically resolves issues and disables notifications to minimize noise.","It predicts problems by analyzing event correlations.","It substitutes KPIs with random baselines to prevent false positives.","It removes historical logs to expedite troubleshooting."],
+c:1,e:"Predictive analytics correlates multiple signals together (rather than evaluating one metric in isolation) to identify developing patterns before they become failures — the same dynamic-baselining principle behind AI Network Analytics and AI-RRM, surfacing detected deviations as actionable Assurance alerts."},
+
+{t:"Catalyst Center",q:"What does the Dynamic Relevance Learning feature enable the Cisco Catalyst Center to do?",
+o:["Maintain fixed relevance rules set by administrators only.","Rank content purely by recency without user input.","Learn user relevance, gather feedback, adapt dynamically, and learn from mistakes.","Randomize outputs periodically to reduce bias."],
+c:2,e:"Caveat: 'Dynamic Relevance Learning' could not be confirmed as a documented Catalyst Center feature in official Cisco sources — this answer is the best fit by elimination (the only option describing an adaptive learning loop, consistent with how Cisco describes its real dynamic-baselining AI features) rather than a verified fact. Treat with caution."},
+
+{t:"Copilot",q:"What technology is used in AI-assisted tools?",
+o:["code templates","LLMs, trained on networking concepts","LLMs, trained on general knowledge","rule-based programming"],
+c:1,e:"Network-focused AI-assisted tools use LLMs fine-tuned specifically on networking concepts — device syntax, protocol behavior, YANG models, automation patterns — which is what makes them useful for network engineering tasks rather than being generic, unspecialized assistants."},
+
+{t:"Copilot",q:"Where can GitHub Copilot be used?",
+o:["only within the GitHub web repository interface for pull request reviews","exclusively as a standalone mobile application for remote troubleshooting","within supported IDEs like Visual Studio Code, as well as through the CLI","only as a background service that runs during the final code compilation phase"],
+c:2,e:"Copilot's primary usage surface is as an extension inside code editors/IDEs (VS Code, JetBrains, Neovim), plus a CLI component for terminal command suggestions — not confined to the GitHub website, a mobile app, or a compilation-phase background service."},
+
+{t:"AI/Security",q:"What is a direct consequence of a data provenance failure in an AI-based automation framework?",
+o:["The AI model ingests threat intelligence from a hijacked or spoofed external feed, leading to unintended networkwide blocks.","The model's training phase is significantly extended due to the use of encrypted management planes and secure zones.","The human administrators are required to manually approve every low-priority port change on the network.","The AI agent uses short-lived tokens instead of permanent API keys for task execution."],
+c:0,e:"Data provenance failure means trusting unverified external data sources. If an automation framework blindly ingests threat intelligence without verifying its authenticity, a spoofed/hijacked feed can cause the system to automatically block legitimate traffic network-wide — a self-inflicted outage from trusting unverified input."},
+
+{t:"MCP/AI",q:"In which scenario would FastMCP's batching capability be most beneficial for an AI agent?",
+o:["When an AI agent needs to process a single, isolated request with minimal delay.","When an AI agent requires continuous, real-time incremental updates to its context.","When retrieving details for a large number of items from an external API, network latency can be an issue.","When an AI agent needs to manage concurrency for multiple large language models on a single prompt."],
+c:2,e:"Caveat: a specific 'batching' feature name could not be independently confirmed for FastMCP. Based on general batching principles, this answer fits best — combining many individual requests into fewer round-trips directly addresses per-request network latency overhead, unlike a single request, a streaming use case, or multi-model concurrency."},
+];
+
+/* ============ APP STATE ============ */
+let TOPICS = [...new Set(BANK.map(q=>q.t))];
+let selectedTopics = new Set(TOPICS);
+let mode = 'study';
+let session = [];
+let idx = 0;
+let answers = [];
+let liveScore = 0;
+
+function renderTopicChips(){
+  const wrap = document.getElementById('topicChips');
+  wrap.innerHTML = '';
+  TOPICS.forEach(t=>{
+    const n = BANK.filter(q=>q.t===t).length;
+    const chip = document.createElement('div');
+    chip.className = 'chip active';
+    chip.dataset.topic = t;
+    chip.innerHTML = `${t} <span class="n">${n}</span>`;
+    chip.onclick = ()=>{
+      if(selectedTopics.has(t)){ selectedTopics.delete(t); chip.classList.remove('active'); }
+      else { selectedTopics.add(t); chip.classList.add('active'); }
+      updateCountMax();
+    };
+    wrap.appendChild(chip);
+  });
+}
+function updateCountMax(){
+  const avail = BANK.filter(q=>selectedTopics.has(q.t)).length;
+  const slider = document.getElementById('countSlider');
+  slider.max = Math.max(5, avail);
+  if(+slider.value > avail) slider.value = avail;
+  document.getElementById('countBadge').textContent = slider.value;
+  document.getElementById('startBtn').disabled = avail === 0;
+}
+document.getElementById('countSlider').addEventListener('input', e=>{
+  document.getElementById('countBadge').textContent = e.target.value;
+});
+document.getElementById('modeStudy').onclick = ()=>{
+  mode='study';
+  document.getElementById('modeStudy').classList.add('active');
+  document.getElementById('modeExam').classList.remove('active');
+};
+document.getElementById('modeExam').onclick = ()=>{
+  mode='exam';
+  document.getElementById('modeExam').classList.add('active');
+  document.getElementById('modeStudy').classList.remove('active');
+};
+document.getElementById('startBtn').onclick = startSession;
+
+function shuffle(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+
+function startSession(){
+  const pool = shuffle(BANK.filter(q=>selectedTopics.has(q.t)));
+  const n = Math.min(+document.getElementById('countSlider').value, pool.length);
+  session = pool.slice(0,n);
+  answers = session.map(q=>({selected:new Set(), locked:false}));
+  idx = 0; liveScore = 0;
+  document.getElementById('setupScreen').classList.add('hidden');
+  document.getElementById('resultsScreen').classList.add('hidden');
+  document.getElementById('quizScreen').classList.remove('hidden');
+  document.getElementById('qTotal').textContent = session.length;
+  document.getElementById('qModeLabel').textContent = mode==='study' ? 'STUDY MODE' : 'EXAM MODE';
+  renderQuestion();
+}
+
+function isMulti(q){ return Array.isArray(q.c); }
+function correctSet(q){ return isMulti(q) ? new Set(q.c) : new Set([q.c]); }
+
+function renderQuestion(){
+  const q = session[idx];
+  const st = answers[idx];
+  document.getElementById('qNum').textContent = idx+1;
+  document.getElementById('progressFill').style.width = ((idx)/session.length*100)+'%';
+  document.getElementById('liveScore').textContent = liveScore;
+  document.getElementById('qTag').textContent = q.t + (isMulti(q) ? ' · MULTIPLE CHOICE' : '');
+
+  document.getElementById('qText').innerHTML = q.q;
+
+  const letters = 'ABCDE';
+  const optList = document.getElementById('optList');
+  optList.innerHTML = '';
+  q.o.forEach((optText,i)=>{
+    const div = document.createElement('div');
+    div.className = 'opt';
+    div.innerHTML = `<div class="letter">${letters[i]}</div><div class="otext">${optText}</div>`;
+    div.onclick = ()=>selectOption(i);
+    optList.appendChild(div);
+  });
+
+  document.getElementById('explainBox').classList.add('hidden');
+  document.getElementById('prevBtn').disabled = idx===0;
+  document.getElementById('nextBtn').textContent = idx===session.length-1 ? 'FINISH ▸' : 'NEXT →';
+
+  if(st.locked || st.selected.size>0){
+    applyOptionStyles();
+    if(st.locked && mode==='study') showExplain();
+    document.getElementById('nextBtn').disabled = false;
+  } else {
+    document.getElementById('nextBtn').disabled = true;
+  }
+}
+
+function selectOption(i){
+  const q = session[idx];
+  const st = answers[idx];
+  if(st.locked && mode==='study') return;
+
+  if(isMulti(q)){
+    if(st.selected.has(i)) st.selected.delete(i); else st.selected.add(i);
+  } else {
+    st.selected = new Set([i]);
+    if(mode==='study'){ lockAnswer(); }
+  }
+  applyOptionStyles();
+  document.getElementById('nextBtn').disabled = st.selected.size===0;
+}
+
+function lockAnswer(){
+  const st = answers[idx];
+  if(st.locked) return;
+  st.locked = true;
+  const q = session[idx];
+  const cs = correctSet(q);
+  const isCorrect = st.selected.size===cs.size && [...st.selected].every(x=>cs.has(x));
+  st.correct = isCorrect;
+  if(isCorrect) liveScore++;
+  document.getElementById('liveScore').textContent = liveScore;
+  applyOptionStyles();
+  if(mode==='study') showExplain();
+}
+
+function applyOptionStyles(){
+  const q = session[idx];
+  const st = answers[idx];
+  const cs = correctSet(q);
+  const opts = document.querySelectorAll('#optList .opt');
+  opts.forEach((el,i)=>{
+    el.classList.remove('selected','correct','wrong','locked','dim');
+    if(st.selected.has(i)) el.classList.add('selected');
+    if(st.locked){
+      el.classList.add('locked');
+      if(cs.has(i)) el.classList.add('correct');
+      else if(st.selected.has(i)) el.classList.add('wrong');
+      else el.classList.add('dim');
+    }
+  });
+}
+
+function showExplain(){
+  const q = session[idx];
+  const st = answers[idx];
+  const box = document.getElementById('explainBox');
+  box.classList.remove('hidden');
+  const verdict = st.correct ? '<span class="verdict ok">✓ CORRECT</span>' : '<span class="verdict bad">✗ INCORRECT</span>';
+  box.innerHTML = `${verdict}${q.e}`;
+}
+
+document.getElementById('prevBtn').onclick = ()=>{
+  if(idx>0){ idx--; renderQuestion(); }
+};
+document.getElementById('nextBtn').onclick = ()=>{
+  const st = answers[idx];
+  if(!st.locked) lockAnswer();
+  if(idx < session.length-1){ idx++; renderQuestion(); }
+  else { finishSession(); }
+};
+
+function finishSession(){
+  answers.forEach((st,i)=>{
+    if(!st.locked){
+      st.locked = true;
+      const q = session[i];
+      const cs = correctSet(q);
+      st.correct = st.selected.size===cs.size && [...st.selected].every(x=>cs.has(x));
+    }
+  });
+  liveScore = answers.filter(a=>a.correct).length;
+
+  document.getElementById('quizScreen').classList.add('hidden');
+  document.getElementById('resultsScreen').classList.remove('hidden');
+  document.getElementById('finalScore').textContent = liveScore;
+  document.getElementById('finalTotal').textContent = ' / '+session.length;
+  const pct = Math.round(liveScore/session.length*100);
+  document.getElementById('finalPct').textContent = pct+'% CORRECT';
+
+  let msg = '';
+  if(pct===100) msg = 'Perfect score. Every question correct in this session.';
+  else if(pct>=80) msg = 'Solid run. Review the few items below to close the gaps.';
+  else if(pct>=60) msg = 'Good progress — worth reviewing the missed topics before the next round.';
+  else msg = 'Time to reinforce the fundamentals. Use "Retry Missed" to focus exactly on what needs work.';
+  document.getElementById('resultMsg').textContent = msg;
+
+  renderReview();
+}
+
+function renderReview(){
+  const list = document.getElementById('reviewList');
+  list.innerHTML = '';
+  session.forEach((q,i)=>{
+    const st = answers[i];
+    const div = document.createElement('div');
+    div.className = 'review-item ' + (st.correct?'ok':'bad');
+    const letters='ABCDE';
+    const yourAns = [...st.selected].map(x=>letters[x]).join(', ') || '—';
+    const correctAns = [...correctSet(q)].map(x=>letters[x]).join(', ');
+    div.innerHTML = `<div class="ic">${st.correct?'✓':'✗'}</div>
+      <div class="rt"><b>${i+1}. ${q.q.replace(/<[^>]+>/g,'')}</b><br>
+      Your answer: ${yourAns} ${st.correct?'':'· Correct: '+correctAns}<br>
+      <span style="color:var(--text-dim)">[${q.t}]</span></div>`;
+    list.appendChild(div);
+  });
+}
+
+document.getElementById('reviewBtn').onclick = ()=>{
+  document.getElementById('reviewList').scrollIntoView({behavior:'smooth', block:'start'});
+};
+document.getElementById('restartBtn').onclick = ()=>{
+  document.getElementById('resultsScreen').classList.add('hidden');
+  document.getElementById('setupScreen').classList.remove('hidden');
+};
+document.getElementById('retryWrongBtn').onclick = ()=>{
+  const wrongQs = session.filter((q,i)=>!answers[i].correct);
+  if(wrongQs.length===0){ alert('No missed questions to retry — nice work!'); return; }
+  session = shuffle(wrongQs);
+  answers = session.map(q=>({selected:new Set(), locked:false}));
+  idx=0; liveScore=0;
+  document.getElementById('resultsScreen').classList.add('hidden');
+  document.getElementById('quizScreen').classList.remove('hidden');
+  document.getElementById('qTotal').textContent = session.length;
+  renderQuestion();
+};
+
+function updateTopStats(){
+  document.getElementById('topStats').innerHTML =
+    `<span><b>${BANK.length}</b> questions</span><span><b>${TOPICS.length}</b> topics</span>`;
+}
+renderTopicChips();
+updateCountMax();
+updateTopStats();
+</script>
+</body>
+</html>
